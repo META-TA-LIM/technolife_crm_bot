@@ -2,7 +2,7 @@ const adminMenu = require("../utils/admin-menu");
 const { menuBtn } = require("../helpers/menu.helper");
 const { inlinemenuBtn } = require("../helpers/inline-menu.helper");
 const statisticsMenu = require("../utils/statistics-menu");
-const contacts = require("../../model/contact");
+const contacts = require("../../model/lid");
 const { InlineKeyboard } = require("grammy");
 
 const adminService = async (ctx) => {

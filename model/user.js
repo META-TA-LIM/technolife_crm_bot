@@ -2,15 +2,11 @@ const { model, Schema } = require("mongoose");
 
 const UserSchema = new Schema(
   {
-    birthdayDate: {
+    name: {
       type: String,
       required: true,
     },
-    fullName: {
-      type: String,
-      required: true,
-    },
-    password: {
+    surname: {
       type: String,
       required: true,
     },
@@ -18,18 +14,13 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    photo: {
+    telegramID: {
       type: String,
-      required: true,
     },
-    role: {
-      type: Schema.Types.ObjectId,
-      ref: "Role",
-    },
-    groups: [
+    lids: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Group",
+        ref: "Lid",
       },
     ],
   },

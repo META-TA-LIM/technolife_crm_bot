@@ -1,11 +1,13 @@
-const Board = require("../../model/board");
+const User = require("../../model/user");
 
-exports.boardPost = async (req, res) => {
+exports.userPost = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { name, surname, phoneNumber } = req.body;
 
-    await Board.create({
-      title,
+    await User.create({
+      name,
+      surname,
+      phoneNumber,
     });
     res.status(201).json({
       status: "CREATED",
@@ -21,22 +23,22 @@ exports.boardPost = async (req, res) => {
   }
 };
 
-exports.boardGet = async (req, res) => {
+exports.userGet = async (req, res) => {
   try {
     const { pageSize, page } = req.query;
 
     const limit = parseInt(pageSize) || 10;
     const skip = (parseInt(page) - 1) * limit || 0;
 
-    const Boards = await Board.find().skip(skip).limit(limit).populate("list");
+    const Users = await User.find().skip(skip).limit(limit).populate("lids");
 
-    const totalCount = await Board.countDocuments();
+    const totalCount = await User.countDocuments();
 
     const response = {
       status: "OK",
       code: 200,
       description: "The request has succeeded",
-      snapData: Boards,
+      snapData: Users,
       pagination: {
         page: parseInt(page) || 1,
         pageSize: limit,
@@ -53,16 +55,16 @@ exports.boardGet = async (req, res) => {
   }
 };
 
-exports.boardGetOne = async (req, res) => {
+exports.userGetOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const Board = await Board.findById(id).populate("list");
+    const User = await User.findById(id).populate("lids");
 
     res.status(200).json({
       status: "OK",
       code: 200,
       description: "The request has succeeded",
-      snapData: Board,
+      snapData: User,
     });
   } catch (error) {
     res
@@ -71,14 +73,16 @@ exports.boardGetOne = async (req, res) => {
   }
 };
 
-exports.boardEdit = async (req, res) => {
+exports.userEdit = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title } = req.body;
+    const { name, surname, phoneNumber } = req.body;
 
-    await Board.findByIdAndUpdate(id, {
+    await User.findByIdAndUpdate(id, {
       $set: {
-        title,
+        name,
+        surname,
+        phoneNumber,
       },
     });
     res.status(200).json({
@@ -94,10 +98,10 @@ exports.boardEdit = async (req, res) => {
   }
 };
 
-exports.boardDelete = async (req, res) => {
+exports.userDelete = async (req, res) => {
   try {
     const { id } = req.params;
-    await Board.findByIdAndDelete(id);
+    await User.findByIdAndDelete(id);
 
     res.status(200).json({
       status: "OK",

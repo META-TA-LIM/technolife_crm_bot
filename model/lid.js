@@ -1,38 +1,14 @@
 const { model, Schema } = require("mongoose");
 
-const lidSchema = new Schema(
+const LidSchema = new Schema(
   {
-    comment: {
-      type: String,
-      required: true,
-    },
-    courseID: {
-      type: Schema.Types.ObjectId,
-      ref: "Course",
-    },
-    fullName: {
-      type: String,
-      required: true,
-    },
-    lastConnection: {
-      type: String,
-      required: true,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
     status: {
       type: String,
       required: true,
     },
-    listID: {
-      type: Schema.Types.ObjectId,
-      ref: "List",
+    text: {
+      type: String,
+      required: true,
     },
     userID: {
       type: Schema.Types.ObjectId,
@@ -42,4 +18,4 @@ const lidSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = model("Lid", lidSchema);
+module.exports = model("Lid", LidSchema);

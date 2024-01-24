@@ -1,34 +1,18 @@
 const Lid = require("../../model/lid");
-const List = require("../../model/list");
+const User = require("../../model/user");
 
 exports.lidPost = async (req, res) => {
   try {
-    const {
-      comment,
-      courseID,
-      fullName,
-      lastConnection,
-      location,
-      phoneNumber,
-      status,
-      listID,
-      userID,
-    } = req.body;
+    const { status, text, userID } = req.body;
 
     const lid = await Lid.create({
-      comment,
-      courseID,
-      fullName,
-      lastConnection,
-      location,
-      phoneNumber,
       status,
-      listID,
+      text,
       userID,
     });
-    await List.findByIdAndUpdate(listID, {
+    await User.findByIdAndUpdate(userID, {
       $push: {
-        lid: lid._id,
+        lids: lid._id,
       },
     });
 
@@ -48,27 +32,12 @@ exports.lidPost = async (req, res) => {
 
 exports.lidGet = async (req, res) => {
   try {
-    const { pageSize, page, searchKey, courseID, userID } = req.query;
-
-    const searched = searchKey || "";
-
-    const query = {
-      title: { $regex: new RegExp(searched, "i") }, // Case-insensitive search
-    };
+    const { pageSize, page } = req.query;
 
     const limit = parseInt(pageSize) || 10;
     const skip = (parseInt(page) - 1) * limit || 0;
 
-    const Lids = await Lid.find(
-      {
-        userID: userID,
-        courseID: courseID,
-      },
-      query
-    )
-      .skip(skip)
-      .limit(limit)
-      .populate("courseID listID userID");
+    const Lids = await Lid.find().skip(skip).limit(limit).populate("userID");
 
     const totalCount = await Lid.countDocuments();
 
@@ -96,7 +65,7 @@ exports.lidGet = async (req, res) => {
 exports.lidGetOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const Lid = await Lid.findById(id).populate("courseID listID userID");
+    const Lid = await Lid.findById(id).populate("userID");
 
     res.status(200).json({
       status: "OK",
@@ -114,43 +83,27 @@ exports.lidGetOne = async (req, res) => {
 exports.lidEdit = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      comment,
-      courseID,
-      fullName,
-      lastConnection,
-      location,
-      phoneNumber,
-      status,
-      listID,
-      userID,
-    } = req.body;
+    const { status, text, userID } = req.body;
 
     const Lid = await Lid.findById(id);
 
-    await List.findByIdAndUpdate(Lid.listID, {
+    await User.findByIdAndUpdate(Lid.userID, {
       $pop: {
-        lid: Lid._id,
+        lids: Lid._id,
       },
     });
 
     const updatedData = await Lid.findByIdAndUpdate(id, {
       $set: {
-        comment,
-        courseID,
-        fullName,
-        lastConnection,
-        location,
-        phoneNumber,
         status,
-        listID,
+        text,
         userID,
       },
     });
 
-    await List.findByIdAndUpdate(listID, {
+    await User.findByIdAndUpdate(userID, {
       $push: {
-        lid: updatedData._id,
+        lids: updatedData._id,
       },
     });
 
@@ -172,9 +125,9 @@ exports.lidDelete = async (req, res) => {
     const { id } = req.params;
     const Lid = await Lid.findById(id);
 
-    await List.findByIdAndUpdate(Lid.listID, {
+    await User.findByIdAndUpdate(Lid.userID, {
       $pop: {
-        lid: Lid._id,
+        lids: Lid._id,
       },
     });
 
@@ -200,15 +153,15 @@ exports.lidReplace = async (req, res) => {
 
     const Lid = await Lid.findById(id);
 
-    await List.findByIdAndUpdate(from, {
+    await User.findByIdAndUpdate(from, {
       $pop: {
-        lid: Lid._id,
+        lids: Lid._id,
       },
     });
 
-    await List.findByIdAndUpdate(to, {
+    await User.findByIdAndUpdate(to, {
       $push: {
-        lid: Lid._id,
+        lids: Lid._id,
       },
     });
 

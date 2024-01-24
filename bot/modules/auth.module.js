@@ -1,5 +1,5 @@
 const { Router } = require("@grammyjs/router");
-const contacts = require("../../model/contact");
+const contacts = require("../../model/lid");
 const {
   loginPhoneService,
   loginSurnameService,

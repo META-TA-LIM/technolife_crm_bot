@@ -8,8 +8,9 @@ const start = async (bot) => {
     const admin = await Admin.find();
     if (!admin.length) {
       await Admin.create({
-        phoneNumber: "admin",
-        password: "password",
+        phoneNumber: "+998995252284",
+        password:
+          "$2a$10$4GFd8yGZjTjwiazICt3Us.UyvZwKEn9cyoN63ZJSkShYMMzGjxhr6",
       });
     }
     console.log("MongoDB-ga muvaffaqiyatli ulandik");
