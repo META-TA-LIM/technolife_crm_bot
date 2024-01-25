@@ -39,13 +39,32 @@ exports.lidGet = async (req, res) => {
 
     const Lids = await Lid.find().skip(skip).limit(limit).populate("userID");
 
+    const statusGroups = {}; // To store items grouped by status
+
+    Lids.forEach((element) => {
+      const status = element.status || "default"; // Use "default" if status is not defined
+
+      // Group items by status
+      if (!statusGroups[status]) {
+        statusGroups[status] = [];
+      }
+      statusGroups[status].push(element);
+    });
+
+    const groupedLids = Object.entries(statusGroups).reduce(
+      (acc, [status, items]) => {
+        acc[status] = items;
+        return acc;
+      },
+      {}
+    );
     const totalCount = await Lid.countDocuments();
 
     const response = {
       status: "OK",
       code: 200,
       description: "The request has succeeded",
-      snapData: Lids,
+      snapData: groupedLids,
       pagination: {
         page: parseInt(page) || 1,
         pageSize: limit,
