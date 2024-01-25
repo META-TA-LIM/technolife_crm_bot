@@ -4,8 +4,8 @@
   "description": "bo bizning bot",
   "main": "bot/app.js",
   "scripts": {
-    "start": "node src/app",
-    "dev": "nodemon src/app"
+    "start": "node bot/app",
+    "dev": "nodemon bot/app"
   },
   "keywords": [
     "super",

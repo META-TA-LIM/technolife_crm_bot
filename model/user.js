@@ -14,6 +14,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    from: {
+      type: String,
+      required: true,
+    },
     telegramID: {
       type: String,
     },
