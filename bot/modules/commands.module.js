@@ -15,6 +15,7 @@ bot.command("start", async (ctx) => {
   } else {
     startService(ctx);
   }
+  ctx.session.telegramID = ctx.from.id;
 });
 
 // Command Help

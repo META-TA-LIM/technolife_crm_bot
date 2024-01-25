@@ -1,19 +1,33 @@
 const { inlinemenuBtn } = require("../helpers/inline-menu.helper");
 const { InlineKeyboard } = require("grammy");
+const Users = require("../../model/user");
+const { menuBtn } = require("../helpers/menu.helper");
+const mainMenu = require("../utils/main-menu");
 
 const startService = async (ctx) => {
-  await ctx.reply(
-    `<b>Good morning <a href="tg://user?id=${ctx.from.id}">${
-      ctx.from.first_name
-    } ${
-      ctx.from.last_name || ""
-    }</a>. Welcome to our bot. Let's get to know each other! Enter your name, please</b>`,
-    {
+  const User = await Users.find({ telegramID: ctx.from.id });
+  if (!User.length) {
+    await ctx.reply(
+      `<b>Good morning <a href="tg://user?id=${ctx.from.id}">${
+        ctx.from.first_name
+      } ${
+        ctx.from.last_name || ""
+      }</a>. Welcome to our bot. Let's get to know each other! Enter your name, please</b>`,
+      {
+        parse_mode: "HTML",
+      }
+    );
+    ctx.session.step = "auth";
+  } else {
+    await ctx.reply(`<b>Please select one of them to continue</b>`, {
       parse_mode: "HTML",
-    }
-  );
-
-  ctx.session.step = "auth";
+      reply_markup: {
+        ...menuBtn(mainMenu),
+        resize_keyboard: true,
+      },
+    });
+    ctx.session.step = "user";
+  }
 };
 
 const helpService = async (ctx) => {
@@ -29,7 +43,7 @@ const helpService = async (ctx) => {
 };
 
 const shareService = async (ctx) => {
-  const shareURL = `https://t.me/share/url?url=https://t.me/technolifesupportbott`;
+  const shareURL = `https://t.me/share/url?url=https://t.me/technolifesupportbot`;
   const keyboard = new InlineKeyboard().url("Share Bot", shareURL);
   await ctx.replyWithPhoto(
     "https://telegra.ph/file/b58bf5310e124e462572b.jpg",
