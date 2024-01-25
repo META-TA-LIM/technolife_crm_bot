@@ -1,10 +1,12 @@
 const { inlinemenuBtn } = require("../helpers/inline-menu.helper");
 const { InlineKeyboard } = require("grammy");
 const Users = require("../../model/user");
+const { menuBtn } = require("../helpers/menu.helper");
+const mainMenu = require("../utils/main-menu");
 
 const startService = async (ctx) => {
-  const Users = await Users.find({ telegramID: ctx.from.id });
-  if (!Users) {
+  const User = await Users.find({ telegramID: ctx.from.id });
+  if (!User.length) {
     await ctx.reply(
       `<b>Good morning <a href="tg://user?id=${ctx.from.id}">${
         ctx.from.first_name
@@ -16,17 +18,14 @@ const startService = async (ctx) => {
       }
     );
     ctx.session.step = "auth";
-  }else{
-    await ctx.reply(
-      `<b>Good morning <a href="tg://user?id=${ctx.from.id}">${
-        ctx.from.first_name
-      } ${
-        ctx.from.last_name || ""
-      }</a>. Welcome to our bot. Let's get to know each other! Enter your name, please</b>`,
-      {
-        parse_mode: "HTML",
-      }
-    );
+  } else {
+    await ctx.reply(`<b>Please select one of them to continue</b>`, {
+      parse_mode: "HTML",
+      reply_markup: {
+        ...menuBtn(mainMenu),
+        resize_keyboard: true,
+      },
+    });
     ctx.session.step = "user";
   }
 };
