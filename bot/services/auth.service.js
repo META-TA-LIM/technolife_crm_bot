@@ -16,6 +16,14 @@ const loginPhoneService = async (ctx) => {
   ctx.session.step = "phone";
 };
 
+const loginCountryService = async (ctx) => {
+  await ctx.reply(`<b>Well done, Where are you from</b>`, {
+    parse_mode: "HTML",
+  });
+
+  ctx.session.step = "from";
+};
+
 const loginLastService = async (ctx) => {
   await ctx.reply(
     `<b>Well done,Our administrators will contacts you soon</b>`,
@@ -30,4 +38,9 @@ const loginLastService = async (ctx) => {
   ctx.session.step = "user";
 };
 
-module.exports = { loginPhoneService, loginSurnameService, loginLastService };
+module.exports = {
+  loginPhoneService,
+  loginSurnameService,
+  loginCountryService,
+  loginLastService,
+};
