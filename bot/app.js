@@ -1,7 +1,6 @@
+require("dotenv/config");
 // Bot
 const { Bot } = require("grammy");
-require("dotenv/config");
-
 const start = require("./start/run");
 const all = require("./start/modules");
 

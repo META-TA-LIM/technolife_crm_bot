@@ -1,17 +1,13 @@
-const Lid = require("../../model/lid");
 const Status = require("../../model/status");
+const User = require("../../model/user");
 
-exports.lidPost = async (req, res) => {
+exports.statusPost = async (req, res) => {
   try {
-    const { seller, status } = req.body;
+    const { statusName, name } = req.body;
 
-    const lid = await Lid.create({
-      seller,
-    });
-    await Status.findByIdAndUpdate(status, {
-      $push: {
-        lids: lid._id,
-      },
+    await Status.create({
+      statusName,
+      name,
     });
 
     res.status(201).json({
@@ -28,22 +24,45 @@ exports.lidPost = async (req, res) => {
   }
 };
 
-exports.lidGet = async (req, res) => {
+exports.statusGet = async (req, res) => {
   try {
     const { pageSize, page } = req.query;
 
     const limit = parseInt(pageSize) || 10;
     const skip = (parseInt(page) - 1) * limit || 0;
 
-    const Lids = await Lid.find().skip(skip).limit(limit).populate("seller");
+    const Statuss = await Status.find()
+      .skip(skip)
+      .limit(limit)
+      .populate({
+        path: "lids",
+        populate: {
+          path: "seller",
+        },
+      });
 
-    const totalCount = await Lid.countDocuments();
+    const statusGroups = {}; // To store items grouped by status
+
+    Statuss.forEach((element) => {
+      const status = element.statusName || "default"; // Use "default" if status is not defined
+
+      // Group items by status
+      if (!statusGroups[status]) {
+        statusGroups[status] = {
+          id: element._id,
+          name: element.name,
+          lids: element.lids,
+        };
+      }
+    });
+
+    const totalCount = await Status.countDocuments();
 
     const response = {
       status: "OK",
       code: 200,
       description: "The request has succeeded",
-      snapData: Lids,
+      snapData: statusGroups,
       pagination: {
         page: parseInt(page) || 1,
         pageSize: limit,
@@ -60,16 +79,16 @@ exports.lidGet = async (req, res) => {
   }
 };
 
-exports.lidGetOne = async (req, res) => {
+exports.statusGetOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const Lid = await Lid.findById(id).populate("seller");
+    const status = await Status.findById(id).populate("lids");
 
     res.status(200).json({
       status: "OK",
       code: 200,
       description: "The request has succeeded",
-      snapData: Lid,
+      snapData: status,
     });
   } catch (error) {
     res
@@ -78,16 +97,18 @@ exports.lidGetOne = async (req, res) => {
   }
 };
 
-exports.lidEdit = async (req, res) => {
+exports.statusEdit = async (req, res) => {
   try {
     const { id } = req.params;
-    const { seller } = req.body;
+    const { statusName, name } = req.body;
 
-    await Lid.findByIdAndUpdate(id, {
+    await Status.findByIdAndUpdate(id, {
       $set: {
-        seller,
+        statusName,
+        name,
       },
     });
+
     res.status(200).json({
       status: "OK",
       code: 200,
@@ -101,44 +122,16 @@ exports.lidEdit = async (req, res) => {
   }
 };
 
-exports.lidDelete = async (req, res) => {
+exports.statusDelete = async (req, res) => {
   try {
     const { id } = req.params;
-    await Lid.findByIdAndDelete(id);
+    await Status.findByIdAndDelete(id);
 
     res.status(200).json({
       status: "OK",
       code: 200,
       description: "The request has succeeded",
       snapData: "deleted",
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ status: "Error", code: 500, description: error.message });
-  }
-};
-
-exports.lidReplace = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { from, to } = req.body;
-    const lid = await Lid.findById(id);
-
-    const resultFrom = await Status.findByIdAndUpdate(from, {
-      $pull: { lids: lid._id },
-    });
-
-    const resultTo = await Status.findByIdAndUpdate(to, {
-      $push: { lids: lid._id },
-    });
-
-
-    res.status(200).json({
-      status: "OK",
-      code: 200,
-      description: "The request has succeeded",
-      snapData: "updated",
     });
   } catch (error) {
     res
