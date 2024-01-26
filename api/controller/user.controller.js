@@ -2,13 +2,11 @@ const User = require("../../model/user");
 
 exports.userPost = async (req, res) => {
   try {
-    const { name, surname, phoneNumber, from } = req.body;
+    const { fullname, phoneNumber } = req.body;
 
     await User.create({
-      name,
-      surname,
+      fullname,
       phoneNumber,
-      from,
     });
     res.status(201).json({
       status: "CREATED",
@@ -77,14 +75,12 @@ exports.userGetOne = async (req, res) => {
 exports.userEdit = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, surname, phoneNumber, from } = req.body;
+    const { fullname, phoneNumber } = req.body;
 
     await User.findByIdAndUpdate(id, {
       $set: {
-        name,
-        surname,
+        fullname,
         phoneNumber,
-        from,
       },
     });
     res.status(200).json({
