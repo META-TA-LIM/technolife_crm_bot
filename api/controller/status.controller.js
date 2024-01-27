@@ -1,5 +1,5 @@
 const Status = require("../../model/status");
-const User = require("../../model/user");
+const Lids = require("../../model/lid");
 
 exports.statusPost = async (req, res) => {
   try {
@@ -30,6 +30,8 @@ exports.statusGet = async (req, res) => {
 
     const limit = parseInt(pageSize) || 10;
     const skip = (parseInt(page) - 1) * limit || 0;
+
+    const lids = await Lids.find();
 
     const Statuss = await Status.find()
       .skip(skip)
@@ -63,6 +65,7 @@ exports.statusGet = async (req, res) => {
       code: 200,
       description: "The request has succeeded",
       snapData: statusGroups,
+      total_lids: lids.length,
       pagination: {
         page: parseInt(page) || 1,
         pageSize: limit,
