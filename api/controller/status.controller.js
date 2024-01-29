@@ -125,6 +125,30 @@ exports.statusEdit = async (req, res) => {
   }
 };
 
+exports.statusHide = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isHided } = req.body;
+
+    await Status.findByIdAndUpdate(id, {
+      $set: {
+        isHided,
+      },
+    });
+
+    res.status(200).json({
+      status: "OK",
+      code: 200,
+      description: "The request has succeeded",
+      snapData: "hided",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: "Error", code: 500, description: error.message });
+  }
+};
+
 exports.statusDelete = async (req, res) => {
   try {
     const { id } = req.params;

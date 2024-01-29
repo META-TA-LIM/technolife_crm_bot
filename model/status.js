@@ -10,6 +10,10 @@ const StatusSchema = new Schema(
       type: String,
       required: true,
     },
+    isHided: {
+      type: Boolean,
+      default: false,
+    },
     lids: [
       {
         type: Schema.Types.ObjectId,
