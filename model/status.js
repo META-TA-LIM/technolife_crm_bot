@@ -14,6 +14,10 @@ const StatusSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    order: {
+      type: Number,
+      required: true,
+    },
     lids: [
       {
         type: Schema.Types.ObjectId,
