@@ -149,6 +149,38 @@ exports.statusHide = async (req, res) => {
   }
 };
 
+exports.statusReplace = async (req, res) => {
+  try {
+    const { from, to } = req.body;
+
+    const statusFrom = await Status.findById(from);
+    const statusTo = await Status.findById(to);
+
+    const resultFrom = await Status.findByIdAndUpdate(from, {
+      $set: {
+        order: statusTo.order,
+      },
+    });
+
+    const resultTo = await Status.findByIdAndUpdate(to, {
+      $set: {
+        order: statusFrom.order,
+      },
+    });
+
+    res.status(200).json({
+      status: "OK",
+      code: 200,
+      description: "The request has succeeded",
+      snapData: "updated",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: "Error", code: 500, description: error.message });
+  }
+};
+
 exports.statusDelete = async (req, res) => {
   try {
     const { id } = req.params;
