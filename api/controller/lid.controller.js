@@ -11,10 +11,10 @@ exports.lidPost = async (req, res) => {
       phoneNumber,
     });
 
-    const UserFound = await User.findById(createdUser._id)._id;
+    const UserFound = await User.findById(createdUser._id);
 
     const lid = await Lid.create({
-      UserFound,
+      seller: UserFound._id,
     });
     await Status.findByIdAndUpdate(status, {
       $push: {
