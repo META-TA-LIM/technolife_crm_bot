@@ -3,11 +3,15 @@ const Lids = require("../../model/lid");
 
 exports.statusPost = async (req, res) => {
   try {
+    const Statuss = await Status.find();
     const { statusName, name } = req.body;
+
+    const order = Statuss.length + 1;
 
     await Status.create({
       statusName,
       name,
+      order,
     });
 
     res.status(201).json({
