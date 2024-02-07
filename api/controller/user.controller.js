@@ -29,7 +29,7 @@ exports.userGet = async (req, res) => {
     const limit = parseInt(pageSize) || 10;
     const skip = (parseInt(page) - 1) * limit || 0;
 
-    const Users = await User.find().skip(skip).limit(limit).populate("lids");
+    const Users = await User.find().skip(skip).limit(limit);
 
     const totalCount = await User.countDocuments();
 
@@ -57,7 +57,7 @@ exports.userGet = async (req, res) => {
 exports.userGetOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const User = await User.findById(id).populate("lids");
+    const User = await User.findById(id);
 
     res.status(200).json({
       status: "OK",
