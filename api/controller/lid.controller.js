@@ -1,12 +1,20 @@
 const Lid = require("../../model/lid");
 const Status = require("../../model/status");
+const User = require("../../model/user");
 
 exports.lidPost = async (req, res) => {
   try {
-    const { seller, status } = req.body;
+    const { fullname, phoneNumber, status } = req.body;
+
+    const createdUser = await User.create({
+      fullname,
+      phoneNumber,
+    });
+
+    const UserFound = await User.findById(createdUser._id)._id;
 
     const lid = await Lid.create({
-      seller,
+      UserFound,
     });
     await Status.findByIdAndUpdate(status, {
       $push: {
@@ -132,7 +140,6 @@ exports.lidReplace = async (req, res) => {
     const resultTo = await Status.findByIdAndUpdate(to, {
       $push: { lids: lid._id },
     });
-
 
     res.status(200).json({
       status: "OK",
